@@ -240,6 +240,12 @@ cc.Class({
             }, {
                 easing: "backOut"
             }).start()
+
+            if(nextId===11){
+                top.window.postMessage({
+                    nextId
+                },'*')
+            }
         } else {
             // todo 合成两个西瓜
             console.log(' todo 合成两个西瓜 还没有实现哦~ ')
