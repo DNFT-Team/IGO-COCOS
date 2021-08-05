@@ -57,7 +57,11 @@ cc.Class({
             default: null,
             type: cc.Label
         },
-        fingerBtn: {
+        pauseBtn: {
+            default: null,
+            type: cc.Button
+        },
+        resetBtn: {
             default: null,
             type: cc.Button
         }
@@ -66,19 +70,21 @@ cc.Class({
     onLoad() {
         this.initPhysics()
 
+        this.initGame()     
+
+        // 监听点击事件 todo 是否能够注册全局事件
+        this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this)       
+
+    },
+    start() {},
+
+    initGame(){
         this.isCreating = false
         this.fruitCount = 0
         this.score = 0
         this.useFinger = false
-
-        // 监听点击事件 todo 是否能够注册全局事件
-        this.node.on(cc.Node.EventType.TOUCH_START, this.onTouchStart, this)
-
-        this.initOneFruit()
-
-    },
-    start() {
-        this.fingerBtn.node.on(cc.Node.EventType.TOUCH_START, this.onFingerTouch, this)
+        this.bStop = false
+        this.initOneFruit()      
     },
 
     // 开启物理引擎和碰撞检测
@@ -151,9 +157,30 @@ cc.Class({
 
         fruit.runAction(action)
     },
-    onFingerTouch() {
-        console.log('onFingerTouch')
-        this.useFinger = true
+    //  重置游戏
+    onResetGame(){
+        if(this.bStop) return
+        this.pauseBtn.node.children[0].children[0]._renderComponent.string = 'Pause'
+        this.scoreLabel.string = this.score = 0
+        this.resetBtn.enabled = true
+        this.currentFruit = null
+        let rmNodes = this.node.children.filter(e=>(e._name.indexOf('fruit')>-1) || (e._name.indexOf('juice')>-1))
+        rmNodes.forEach(e=>e.removeFromParent(true))
+        this.initGame()
+    },
+    //  暂停/恢复游戏
+    onPauseTouch() {
+        this.bStop = !this.bStop;
+        if (this.bStop) {
+            this.pauseBtn.node.children[0].children[0]._renderComponent.string = 'Resume'
+            cc.director.pause();
+            this.resetBtn.enabled = false
+        }
+        else {
+            this.pauseBtn.node.children[0].children[0]._renderComponent.string = 'Pause'
+            this.resetBtn.enabled = true
+            cc.director.resume();
+        }
     },
     // 获取下一个水果的id
     getNextFruitId() {
@@ -243,14 +270,12 @@ cc.Class({
 
             if(nextId===11){
                 top.window.postMessage({
-                    nextId
+                    nextId,status:'success'
                 },'*')
             }
         } else {
             // todo 合成两个西瓜
             console.log(' todo 合成两个西瓜 还没有实现哦~ ')
-            console.log(this)
-            alert('First Node 12')
         }
     },
 
