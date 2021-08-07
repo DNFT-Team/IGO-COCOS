@@ -72,10 +72,15 @@ cc.Class({
         timerTxt: {
             default: null,
             type: cc.Label
+        },
+        finalBtn: {
+            default: null,
+            type: cc.Button
         }
     },
 
     onLoad() {
+        this.finalBtn.node.active = false
         this.initPhysics()
 
         this.initGame()     
@@ -304,11 +309,11 @@ cc.Class({
                 easing: "backOut"
             }).start()
 
-            // if(nextId===11){
             if(nextId===3){
                 top.window.postMessage({
                     status:'success',source:'cocos',project:'bwm',nextId
                 },'*')
+                this.finalBtn.node.active = true
                 cc.director.end()
             }
         } else {
