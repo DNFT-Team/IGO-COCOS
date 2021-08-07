@@ -309,7 +309,8 @@ cc.Class({
                 easing: "backOut"
             }).start()
 
-            if(nextId===3){
+            // if(nextId===10){
+            if(nextId===8){
                 top.window.postMessage({
                     status:'success',source:'cocos',project:'bwm',nextId
                 },'*')
