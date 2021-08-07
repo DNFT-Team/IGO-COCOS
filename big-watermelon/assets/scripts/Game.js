@@ -72,15 +72,10 @@ cc.Class({
         timerTxt: {
             default: null,
             type: cc.Label
-        },
-        finalBtn: {
-            default: null,
-            type: cc.Button
         }
     },
 
     onLoad() {
-        this.finalBtn.node.active = false
         this.initPhysics()
 
         this.initGame()     
@@ -309,13 +304,11 @@ cc.Class({
                 easing: "backOut"
             }).start()
 
-            // if(nextId===10){
-            if(nextId===8){
+            if(nextId===11){
                 top.window.postMessage({
                     status:'success',source:'cocos',project:'bwm',nextId
                 },'*')
-                this.finalBtn.node.active = true
-                cc.director.end()
+                // cc.director.end()
             }
         } else {
             // todo 合成两个西瓜
