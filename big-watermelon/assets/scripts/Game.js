@@ -64,6 +64,14 @@ cc.Class({
         resetBtn: {
             default: null,
             type: cc.Button
+        },
+        tryBtn:{
+            default: null,
+            type: cc.Button
+        },
+        timerTxt: {
+            default: null,
+            type: cc.Label
         }
     },
 
@@ -84,7 +92,34 @@ cc.Class({
         this.score = 0
         this.useFinger = false
         this.bStop = false
-        this.initOneFruit()      
+        this.tryBtn.node.active = false;
+        this.initOneFruit()
+
+        // this.counters = 10 * 60
+        this.counters = 1 * 60
+        this.schedule(function () {    // 计时器将每隔 1s 执行一次。
+            this.counterHandler();
+        }, 1);
+
+        top.window.postMessage({
+            status:'success',source:'cocos',project:'bwm',nextId:1
+        },'*')
+    },
+
+    counterHandler() {                // 倒计时算法
+        if (this.counters >= 1) {
+            this.counters = this.counters - 1;
+            //场景中文本框显示
+            let min = Math.ceil(this.counters / 60) - 1;
+            let sec = this.counters % 60;
+            if(min < 10 )  min = '0' + min
+            if(sec < 10 ) sec = '0' + sec
+            this.timerTxt.string = `${min}:${sec}`
+            cc.log(`daojishi=${this.counters};${min}:${sec}`);
+        }else {
+            this.timerTxt.string = '00:00'
+            this.tryBtn.node.active = true;
+        }
     },
 
     // 开启物理引擎和碰撞检测
@@ -268,9 +303,11 @@ cc.Class({
                 easing: "backOut"
             }).start()
 
-            if(nextId===11){
+            // if(nextId===11){
+            //  TODO 测试修改成功token序号为7
+            if(nextId===7){
                 top.window.postMessage({
-                    nextId,status:'success'
+                    status:'success',source:'cocos',project:'bwm',nextId
                 },'*')
             }
         } else {
