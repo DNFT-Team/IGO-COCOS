@@ -92,18 +92,13 @@ cc.Class({
         this.score = 0
         this.useFinger = false
         this.bStop = false
-        this.tryBtn.node.active = false;
+        this.tryBtn.node.active = false
+        this.resetBtn.enabled = true
+        this.pauseBtn.enabled = true
         this.initOneFruit()
 
-        // this.counters = 10 * 60
-        this.counters = 1 * 60
-        this.schedule(function () {    // 计时器将每隔 1s 执行一次。
-            this.counterHandler();
-        }, 1);
-
-        top.window.postMessage({
-            status:'success',source:'cocos',project:'bwm',nextId:1
-        },'*')
+        this.counters = 30 * 60
+        this.schedule( this.counterHandler, 1);
     },
 
     counterHandler() {                // 倒计时算法
@@ -112,13 +107,18 @@ cc.Class({
             //场景中文本框显示
             let min = Math.ceil(this.counters / 60) - 1;
             let sec = this.counters % 60;
-            if(min < 10 )  min = '0' + min
-            if(sec < 10 ) sec = '0' + sec
+            if( min < 0 ) min = 0
+            if( min < 10 )  min = '0' + min
+            if( sec < 10 ) sec = '0' + sec
             this.timerTxt.string = `${min}:${sec}`
-            cc.log(`daojishi=${this.counters};${min}:${sec}`);
         }else {
             this.timerTxt.string = '00:00'
+            this.resetBtn.enabled = false
+            this.pauseBtn.enabled = false
+            this.tryBtn.enabled = true;
             this.tryBtn.node.active = true;
+            cc.director.pause();
+            this.unschedule(this.counterHandler)
         }
     },
 
@@ -196,6 +196,7 @@ cc.Class({
     onResetGame(){
         if(this.bStop) return
         this.pauseBtn.node.children[0].children[0]._renderComponent.string = 'Pause'
+        cc.director.resume();
         this.scoreLabel.string = this.score = 0
         this.resetBtn.enabled = true
         this.currentFruit = null
@@ -304,11 +305,11 @@ cc.Class({
             }).start()
 
             // if(nextId===11){
-            //  TODO 测试修改成功token序号为7
-            if(nextId===7){
+            if(nextId===3){
                 top.window.postMessage({
                     status:'success',source:'cocos',project:'bwm',nextId
                 },'*')
+                cc.director.end()
             }
         } else {
             // todo 合成两个西瓜
