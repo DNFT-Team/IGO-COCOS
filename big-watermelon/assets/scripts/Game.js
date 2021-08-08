@@ -64,6 +64,14 @@ cc.Class({
         resetBtn: {
             default: null,
             type: cc.Button
+        },
+        tryBtn:{
+            default: null,
+            type: cc.Button
+        },
+        timerTxt: {
+            default: null,
+            type: cc.Label
         }
     },
 
@@ -84,7 +92,34 @@ cc.Class({
         this.score = 0
         this.useFinger = false
         this.bStop = false
-        this.initOneFruit()      
+        this.tryBtn.node.active = false
+        this.resetBtn.enabled = true
+        this.pauseBtn.enabled = true
+        this.initOneFruit()
+
+        this.counters = 30 * 60
+        this.schedule( this.counterHandler, 1);
+    },
+
+    counterHandler() {                // 倒计时算法
+        if (this.counters >= 1) {
+            this.counters = this.counters - 1;
+            //场景中文本框显示
+            let min = Math.ceil(this.counters / 60) - 1;
+            let sec = this.counters % 60;
+            if( min < 0 ) min = 0
+            if( min < 10 )  min = '0' + min
+            if( sec < 10 ) sec = '0' + sec
+            this.timerTxt.string = `${min}:${sec}`
+        }else {
+            this.timerTxt.string = '00:00'
+            this.resetBtn.enabled = false
+            this.pauseBtn.enabled = false
+            this.tryBtn.enabled = true;
+            this.tryBtn.node.active = true;
+            cc.director.pause();
+            this.unschedule(this.counterHandler)
+        }
     },
 
     // 开启物理引擎和碰撞检测
@@ -161,6 +196,7 @@ cc.Class({
     onResetGame(){
         if(this.bStop) return
         this.pauseBtn.node.children[0].children[0]._renderComponent.string = 'Pause'
+        cc.director.resume();
         this.scoreLabel.string = this.score = 0
         this.resetBtn.enabled = true
         this.currentFruit = null
@@ -172,7 +208,7 @@ cc.Class({
     onPauseTouch() {
         this.bStop = !this.bStop;
         if (this.bStop) {
-            this.pauseBtn.node.children[0].children[0]._renderComponent.string = 'Resume'
+            this.pauseBtn.node.children[0].children[0]._renderComponent.string = 'Continue'
             cc.director.pause();
             this.resetBtn.enabled = false
         }
@@ -270,8 +306,9 @@ cc.Class({
 
             if(nextId===11){
                 top.window.postMessage({
-                    nextId,status:'success'
+                    status:'success',source:'cocos',project:'bwm',nextId
                 },'*')
+                // cc.director.end()
             }
         } else {
             // todo 合成两个西瓜
