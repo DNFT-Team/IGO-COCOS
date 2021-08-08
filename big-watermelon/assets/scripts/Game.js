@@ -208,7 +208,7 @@ cc.Class({
     onPauseTouch() {
         this.bStop = !this.bStop;
         if (this.bStop) {
-            this.pauseBtn.node.children[0].children[0]._renderComponent.string = 'Resume'
+            this.pauseBtn.node.children[0].children[0]._renderComponent.string = 'Continue'
             cc.director.pause();
             this.resetBtn.enabled = false
         }
