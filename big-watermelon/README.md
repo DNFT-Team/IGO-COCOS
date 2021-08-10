@@ -9,7 +9,7 @@
 * [DNFT-IGO-Demo在线预览地址](http://fun.dnft.world/syncbtc)
 
 ## Features
-- 1-11位token合成
+- Token 1～11
 - feat add bgm
 - feat add game pause/resume/restart
 - feat add countdown
